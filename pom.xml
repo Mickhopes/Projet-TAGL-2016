@@ -7,8 +7,9 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>serveur</module>
-    <module>client</module>
-  </modules>
+        <module>client</module>
+        <module>stockage</module>
+    </modules>
 
 	<dependencies>
 	    <dependency>
