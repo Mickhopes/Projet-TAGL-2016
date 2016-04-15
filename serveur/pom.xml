@@ -12,4 +12,13 @@
   <version>1.0</version>
   <name>Serveur du projet</name>
   <url>http://maven.apache.org</url>
+
+  <dependencies>
+      <dependency>
+        <groupId>fr.uga.info</groupId>
+        <artifactId>stockage</artifactId>
+        <version>1.0</version>
+        <scope>compile</scope>
+      </dependency>
+  </dependencies>
 </project>
