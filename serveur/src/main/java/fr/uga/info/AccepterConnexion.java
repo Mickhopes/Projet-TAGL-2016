@@ -33,9 +33,9 @@ public class AccepterConnexion implements Runnable{
 			while(true){
 				log =  new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
 				socket = socketserver.accept();
-				System.out.println("Client "+socket.getInetAddress().getHostName()+" avec "+socket.getInetAddress().getHostAddress()+" s'est connecté");
+				System.out.println("Client "+socket.getInetAddress().getHostName()+" avec "+socket.getInetAddress().getHostAddress()+" s'est connect�");
 				date = new Date();
-				log.println(dateFormat.format(date)+"Client "+socket.getInetAddress().getHostName()+" avec "+socket.getInetAddress().getHostAddress()+" s'est connecté");
+				log.println(dateFormat.format(date)+"Client "+socket.getInetAddress().getHostName()+" avec "+socket.getInetAddress().getHostAddress()+" s'est connecte");
 				log.close();
 				
 				t1 = new Thread(new ChatClientServeur(socket));

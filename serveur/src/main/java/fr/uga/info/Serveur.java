@@ -26,7 +26,7 @@ public class Serveur {
 		System.out.println("|                                                    |");
 		System.out.println("|                                                    |");
 		System.out.println("------------------------------------------------------");
-		System.out.println("Le serveur est Ã  l'Ã©coute du port "+ss.getLocalPort());
+		System.out.println("Le serveur est à l'écoute du port "+ss.getLocalPort());
 		
 		t = new Thread(new AccepterConnexion(ss));
 		t.start();
