@@ -42,7 +42,6 @@ public class ChatClientServeur implements Runnable{
 	
 	public void run() {
 		try {
-			
 			//Ouverture du fichier de logs
 			log =  new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
 			//Creation du canal de lecture depuis le client
@@ -53,16 +52,34 @@ public class ChatClientServeur implements Runnable{
 			//Envoie d'un message au client pour signifier que le serveur est pret a recevoir une requete.
 			out.println("ready");
 			out.flush();
-			//Lire une requete tant que le message n'est pas "deconnection"
-			String requeteToExecute = in.readLine();
-			while (!requeteToExecute.equals("deconnection")) {
-				log.println("Serveur a une nouvelle requete a executer : ["+requeteToExecute+"]");
-				log.close();
+			
+			//Lire le mode tant que ce n'est pas "deconnection"
+			//Le mode permet de de choisir entre l'ajout et la demande d'un objet.
+			String mode = in.readLine();
+			while (!mode.equals("deconnection")) {
 				
-				requete = new Thread(new ExecutionRequete(requeteToExecute, out));
-				requete.start();
+				if (mode.equals("ajout")) {
+					//Code qui va ajouter un objet sur disk / cache du serveur
+					out.println("attente requete ajout");
+					out.flush();
+					String requeteAjout = in.readLine();
+					//Lancement d'un thread qui va ajouter un objet sur le serveur.
+					log.println(dateFormat.format(date)+"Serveur a un nouvel ajout : ["+requeteAjout+"]");
+					
+				}else if (mode.equals("demande")){
+					//Code qui va executer la requete de demande et fournir une reponse
+					out.println("attente requete demande");
+					out.flush();
+					String requeteToExecute = in.readLine();
+					log.println(dateFormat.format(date)+"Serveur a une nouvelle requete a executer : ["+requeteToExecute+"]");
+					requete = new Thread(new ExecutionRequete(requeteToExecute, out));
+					requete.start();
+				}else {
+					out.println("Desole, je n'ai pas compris votre requete");
+					out.flush();
+				}
 				
-				requeteToExecute = in.readLine();
+				mode = in.readLine();
 			}
 			
 			//On a recu la deconnection normale du client
@@ -70,9 +87,8 @@ public class ChatClientServeur implements Runnable{
 			
 		} catch (Exception e){
 			System.out.println("(Serveur) Erreur ChatClientServeur");
-			System.out.println("Le client s'est déconnecté, fermeture de la socket");
-			log.println("Le client s'est deconnecte, fermeture de la socket");
-			log.close();
+			System.out.println("Le client s'est deconnecte, fermeture de la socket");
+			log.println(dateFormat.format(date)+"Le client s'est deconnecte, fermeture de la socket");
 			fermetureSocket(socket);
 		}
 	}

@@ -26,12 +26,16 @@ public class ChatClientServeur implements Runnable {
 			sc = new Scanner(System.in);
 			
 			/*Thread t4 = new Thread(new Emission(out));
-			t4.start();
-			Thread t3 = new Thread(new Reception(in2,in));
-			t3.start();*/
+			t4.start();*/
+			
 			String message = in.readLine();
 			if (message.equals("ready")) {
 				System.out.println("le serveur est pret a recevoir une requete.");
+				out.println("demande");
+				out.flush();
+				message = in.readLine();
+				//Le serveur a repondu et doit etre pret a recevoir une demande.
+				assert(message.equals("attente requete demande"));
 				out.println("Requete test");
 				out.flush();
 			}else {
@@ -50,7 +54,7 @@ public class ChatClientServeur implements Runnable {
 			
 		    
 		} catch (IOException e) {
-			System.err.println("Le serveur distant s'est déconnecté !");
+			System.err.println("Le serveur distant s'est deconnecte !");
 		}
 	}
 

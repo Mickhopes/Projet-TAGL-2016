@@ -33,7 +33,7 @@ public class AccepterConnexion implements Runnable{
 			while(true){
 				log =  new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
 				socket = socketserver.accept();
-				System.out.println("Client "+socket.getInetAddress().getHostName()+" avec "+socket.getInetAddress().getHostAddress()+" s'est connecté");
+				System.out.println("Client "+socket.getInetAddress().getHostName()+" avec "+socket.getInetAddress().getHostAddress()+" s'est connecte");
 				date = new Date();
 				log.println(dateFormat.format(date)+"Client "+socket.getInetAddress().getHostName()+" avec "+socket.getInetAddress().getHostAddress()+" s'est connecte");
 				log.close();
@@ -44,7 +44,5 @@ public class AccepterConnexion implements Runnable{
 		} catch (IOException e) {
 			System.err.println("Erreur serveur");
 		}
-		
 	}
-
 }
