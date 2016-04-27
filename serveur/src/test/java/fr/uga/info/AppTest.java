@@ -35,4 +35,8 @@ public class AppTest
     {
         assertTrue( true );
     }
+    
+    public void testLaunchServer() {
+    	Serveur.main(null);    	
+    }
 }

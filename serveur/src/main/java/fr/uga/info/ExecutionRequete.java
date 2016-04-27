@@ -11,7 +11,6 @@ public class ExecutionRequete implements Runnable {
 		out = o;
 	}
 
-
 	public void run() {
 		out.println("reponse de ExecutionRequete");
 		out.flush();
