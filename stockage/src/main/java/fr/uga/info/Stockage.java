@@ -12,7 +12,5 @@ public class Stockage {
 	
 	public Stockage() {
 		map = new HashMap<>();
-	}
-	
-	
+	}	
 }
