@@ -50,59 +50,23 @@ public class ChatClientServeur implements Runnable{
 		try {
 			//Ouverture du fichier de logs
 			log =  new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
-			//Creation du canal de lecture depuis le client
-			//in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			in2 = new ObjectInputStream(socket.getInputStream());
-			//Creation du canal d'ecriture vers le client
-			//out = new PrintWriter(socket.getOutputStream());
 			out2 = new ObjectOutputStream(socket.getOutputStream());
 			
 			//Envoie d'un message au client pour signifier que le serveur est pret a recevoir une requete.
 			out2.writeObject("ready");
 			out2.flush();
-			//out.println("ready");
-			//out.flush();
-			
-			//Lire le mode tant que ce n'est pas "deconnection"
-			//Le mode permet de de choisir entre l'ajout et la demande d'un objet.
-			String mode = (String) in2.readObject();
-			//String mode = in.readLine();
-			while (!mode.equals("deconnection")) {
+
+			//Lire la commande tant que ce n'est pas "deconnection"
+			String commande = (String) in2.readObject();
+			while (!commande.equals("deconnection")) {
 				
-				if (mode.equals("ajout")) {
-					//Code qui va ajouter un objet sur disk / cache du serveur
-					out2.writeObject("attente requete ajout");
-					out2.flush();
-					//out.println("attente requete ajout");
-					//out.flush();
-					Object requeteAjout = in2.readObject();
-					//String requeteAjout = in.readLine();
-					//Lancement d'un thread qui va ajouter un objet sur le serveur.
-					log.println(dateFormat.format(date)+"Serveur a un nouvel ajout : ["+requeteAjout+"]");
-					requete = new Thread(new ExecutionRequete(requeteAjout, out2, false, stockage));
-					requete.start();
-					
-				}else if (mode.equals("demande")){
-					//Code qui va executer la requete de demande et fournir une reponse
-					out2.writeObject("attente requete demande");
-					out2.flush();
-					//out.println("attente requete demande");
-					//out.flush();
-					Object requeteToExecute = in2.readObject();
-					//String requeteToExecute = in.readLine();
-					log.println(dateFormat.format(date)+"Serveur a une nouvelle requete a executer : ["+requeteToExecute+"]");
-					requete = new Thread(new ExecutionRequete(requeteToExecute, out2, true, stockage));
-					requete.start();
-					
-				}else {
-					out2.writeObject("Desole, je n'ai pas compris votre requete");
-					out2.flush();
-					//out.println("Desole, je n'ai pas compris votre requete");
-					//out.flush();
-				}
+				//Lancement d'un thread qui va ajouter un objet sur le serveur.
+				log.println(dateFormat.format(date)+"Serveur a une nouvelle commande : ["+commande+"]");
+				requete = new Thread(new ExecutionRequete(commande, out2, stockage));
+				requete.start();
 				
-				mode = (String) in2.readObject();
-				//mode = in.readLine();
+				commande = (String) in2.readObject();
 			}
 			
 			//On a recu la deconnection normale du client
