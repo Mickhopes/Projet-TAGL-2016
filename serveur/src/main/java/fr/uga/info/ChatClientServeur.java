@@ -1,4 +1,4 @@
-package fr.uga.info;
+﻿package fr.uga.info;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
