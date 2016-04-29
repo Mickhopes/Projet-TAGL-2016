@@ -10,37 +10,57 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class AccepterConnexion implements Runnable{
-
+/**
+ * Classe qui gere l'acceptation de la connexion d'un client au serveur
+ */
+public class AccepterConnexion implements Runnable {
+	
+	/**
+	 * La server socket, recuperee du Serveur
+	 */
 	private ServerSocket socketserver = null;
-	private Socket socket = null;
-	public Thread t1, ps;
-	private PrintWriter log;
-	private Date date = new Date();
-	private DateFormat dateFormat = new SimpleDateFormat("[dd/MM HH:mm:ss]");
+	/**
+	 * Objet Stockage, recupere du serveur et envoye a ChatClientServeur
+	 */
 	private Stockage stockage;
+	/**
+	 * format de Date a utiliser dans le log
+	 */
+	private final DateFormat dateFormat = new SimpleDateFormat("[dd/MM HH:mm:ss]");
 	
-	
+	/**
+	 * Contructeur
+	 * 
+	 * @param ss la socket associee au serveur
+	 * @param stk l'objet Stockage associe au serveur
+	 */
 	public AccepterConnexion(ServerSocket ss, Stockage stk){
 		socketserver = ss;
 		stockage = stk;
 	}
 	
-	
+	/**
+	 * Implementation de la methode run de l'interface Runnable
+	 * 
+	 * La fonction tourne en boucle et accepte les demandes de connexion.
+	 * Chaque demande acceptee entraine la création d'un thread qui va
+	 * appeler la classe ChatClientServeur
+	 */
 	public void run() {
 		try {
+			PrintWriter log;
 			log =  new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
 			log.println("Serveur ready !");
 			log.close();
 			while(true){
 				log =  new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
-				socket = socketserver.accept();
+				Socket socket = socketserver.accept();
 				System.out.println("Client "+socket.getInetAddress().getHostName()+" avec "+socket.getInetAddress().getHostAddress()+" s'est connecte");
-				date = new Date();
+				Date date = new Date();
 				log.println(dateFormat.format(date)+"Client "+socket.getInetAddress().getHostName()+" avec "+socket.getInetAddress().getHostAddress()+" s'est connecte");
 				log.close();
 				
-				t1 = new Thread(new ChatClientServeur(socket, stockage));
+				Thread t1 = new Thread(new ChatClientServeur(socket, stockage));
 				t1.start();
 			}
 		} catch (IOException e) {
