@@ -59,17 +59,21 @@ public class StockageTest {
 	public void ajoutListeTest() {
 		Stockage s = new Stockage();
 		
+		int old = s.nombreObjetListe("test");
+		
 		s.ajoutListeObject("test", "coucou", false);
 		s.ajoutListeObject("test", "hello", true);
 		s.ajoutListeObject("test", "je suis premier", false);
 		
 		assertEquals(1, s.nombreObjet());
-		assertEquals(3, s.nombreObjetListe("test"));
+		assertEquals(old+3, s.nombreObjetListe("test"));
+		
+		old = s.nombreObjet();
 		
 		s.ajoutListeObject("des dates", new Date(), false);
-		s.ajouterObjet("intru", "Je suis un intru !");
+		s.ajouterObjet("intrus", "Je suis un intrus !");
 		
-		assertEquals(3, s.nombreObjet());
+		assertEquals(old+2, s.nombreObjet());
 	}
 	
 	@Test
@@ -87,22 +91,23 @@ public class StockageTest {
 		
 		assertEquals(s.recupererListeObject("test", 2, 3).size(), 2);
 		
-		assertNull(s.recupererListeObject("test", 5, 7));
+		assertNull(s.recupererListeObject("test", 15, 17));
 	}
 	
 	@Test
 	public void supprimerListeTest() {
 		Stockage s = new Stockage();
 		
+		int old = s.nombreObjetListe("test");
 		s.ajoutListeObject("test", "coucou", false);
 		s.ajoutListeObject("test", "hello", true);
 		s.ajoutListeObject("test", "je suis premier", false);
 		
-		assertEquals(3, s.nombreObjetListe("test"));
+		assertEquals(old+3, s.nombreObjetListe("test"));
 		
 		s.supprimerListeObject("test", true);
 		
-		assertEquals(2, s.nombreObjetListe("test"));
+		assertEquals(old+2, s.nombreObjetListe("test"));
 		
 		s.supprimerObjet("test");
 		

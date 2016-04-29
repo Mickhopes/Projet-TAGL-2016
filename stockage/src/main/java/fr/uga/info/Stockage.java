@@ -1,9 +1,12 @@
 package fr.uga.info;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,7 +23,12 @@ public class Stockage {
 	/**
 	 * Taille limite d'objets en mémoire.
 	 */
-	static final int TAILLE_LIMITE = 1000;
+	static final int TAILLE_LIMITE = 2000;
+	
+	/**
+	 * Taille limite d'objets dans une liste.
+	 */
+	static final int TAILLE_LIMITE_LISTE = 200;
 	
 	/**
 	 * Attribut contenant le nombre d'objets en mémoire.
@@ -77,17 +85,17 @@ public class Stockage {
 	 * @return true si l'objet à été supprimé, false sinon.
 	 */
 	public synchronized boolean supprimerObjet(String id) {
-		// TODO: Si l'object n'est pas en mémoire, vérifier si il est
-		// sauvegarder dans le système de fichier
 		if (map.containsKey(id)) {
 			if (map.get(id) instanceof LinkedList<?>) {
 				tailleOccupee -= ((LinkedList<Object>)map.get(id)).size();
 			}
 			
 			map.remove(id);
+			supprimerFichier(id);
 			return true;
+		} else {
+			return supprimerFichier(id);
 		}
-		return false;
 	}
 	
 	/**
@@ -97,7 +105,7 @@ public class Stockage {
 	 * @param id L'id de la liste.
 	 * @param o L'object à ajouter.
 	 * @param fin true pour ajouter à la fin de la liste, false au début.
-	 * @return -1 si l'object renseigné par "id" n'est pas une liste, sinon la nouvelle taille de la liste.
+	 * @return -1 si l'object renseigné par "id" n'est pas une liste, -2 si la taille limite de la liste est atteinte sinon la nouvelle taille de la liste.
 	 */
 	public synchronized int ajoutListeObject(String id, Object o, boolean fin) {
 		Object liste = recupererObjet(id);
@@ -111,12 +119,14 @@ public class Stockage {
 				listeObjet.addFirst(o);
 			}
 			ajouterObjet(id, listeObjet);
-			tailleOccupee ++;
 			return listeObjet.size();
 		} else {
 			// On vérifie d'abords que l'objet est bien une liste
 			if (liste instanceof LinkedList<?>) {
 				LinkedList<Object> listeObjet = (LinkedList<Object>)liste;
+				if (listeObjet.size() == TAILLE_LIMITE_LISTE) {
+					return -2;
+				}
 				if (fin) {
 					listeObjet.addLast(o);
 				} else {
@@ -148,14 +158,6 @@ public class Stockage {
 				if (fin == -1) {
 					return listeObjet;
 				} else {
-					if (fin == -1) {
-						List<Object> l = new ArrayList<Object>();
-						for(int i = 0; i < listeObjet.size(); i++) {
-							l.add(listeObjet.get(i));
-						}
-						return l;
-					}
-					
 					fin = fin >= listeObjet.size() ? listeObjet.size()-1 : fin;
 					if (fin < debut) {
 						return null;
@@ -202,7 +204,7 @@ public class Stockage {
 	/**
 	 * Renvoi le nombre d'objet stocké en mémoire.
 	 * 
-	 * @return
+	 * @return le nombre d'objets stocké en mémoire.
 	 */
 	public synchronized int nombreObjet() {
 		return map.size();
@@ -211,7 +213,8 @@ public class Stockage {
 	/**
 	 * Renvoi le nombre d'objet de la liste stocké en mémoire.
 	 * 
-	 * @return Le nombre d'object de la liste, -1 si la liste n'existe pas, -2 si l'objet n'est pas une liste.
+	 * @param id L'id de la liste.
+	 * @return Le nombre d'object de la liste, 0 si la liste n'existe pas, -2 si l'objet n'est pas une liste.
 	 */
 	public synchronized int nombreObjetListe(String id) {
 		Object liste = recupererObjet(id);
@@ -222,43 +225,67 @@ public class Stockage {
 			}
 			return -2;
 		}
-		return -1;
+		return 0;
 	}
 	
 	private void sauvegarderPlusAncien() {
-		try (FileWriter fichier = new FileWriter("object_list.txt", true)) {
-			Entry<String, Object> e = map.entrySet().iterator().next();
+		Entry<String, Object> e = map.entrySet().iterator().next();
+		new File("Objets").mkdirs();
+		try (
+				FileOutputStream fichier = new FileOutputStream(new File("Objets/" + e.getKey() + ".ser"));
+				ObjectOutputStream oos = new ObjectOutputStream(fichier);
+				) {
+			oos.writeObject(e.getValue());
+			oos.flush();
+			
 			if (e.getValue() instanceof LinkedList<?>) {
-				fichier.write(e.getKey() + ";");
-				LinkedList<Object> l = (LinkedList<Object>)e.getValue();
-				fichier.write(l.get(0).toString());
-				for(int i = 1; i < l.size(); i++) {
-					fichier.write(",,," + l.get(i));
-				}
-				tailleOccupee -= l.size();
+				tailleOccupee -= ((LinkedList<Object>)e.getValue()).size();
 			} else {
-				fichier.write(e.getKey() + ";;;" + e.getValue() + "\n");
 				tailleOccupee--;
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			
+			System.out.println("fichier \"" + e.getKey() + ".ser\" créé");
+			
+			map.remove(e.getKey());
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 	}
 	
 	private void chargerObjet(String id) {
 		try (
-				BufferedReader in = new BufferedReader(new FileReader("object_list.txt"));
-				FileWriter out = new FileWriter("object_list.txt");
+				FileInputStream fichier = new FileInputStream(new File("Objets/" + id + ".ser"));
+				ObjectInputStream ois = new ObjectInputStream(fichier);
 				) {
-			String line;
-			while((line = in.readLine()) != null) {
-				String[] parts = line.split(";;;");
-				if (id.equals(parts[0])) {
-					
+			Object o = ois.readObject();
+			
+			if (o instanceof LinkedList<?>) {
+				LinkedList<Object> l = (LinkedList<Object>)o;
+				
+				while(tailleOccupee+l.size() >= TAILLE_LIMITE) {
+					sauvegarderPlusAncien();
 				}
+				
+				map.put(id, l);
+				tailleOccupee += l.size();
+			} else {
+				if (tailleOccupee == TAILLE_LIMITE) {
+					sauvegarderPlusAncien();
+				}
+				
+				map.put(id, o);
+				tailleOccupee++;
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch(FileNotFoundException ex) {
+			System.out.println("Chargement de \"" + id + ".ser\" impossible, l'objet n'existe pas");
+		} catch (IOException | ClassNotFoundException ex) {
+			ex.printStackTrace();
 		}
+	}
+	
+	private boolean supprimerFichier(String id) {
+		File suppr = new File("Objets/" + id + ".ser");
+		suppr.getAbsoluteFile().delete();
+		return true;
 	}
 }
