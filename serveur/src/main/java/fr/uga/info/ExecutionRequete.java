@@ -5,7 +5,7 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 
 /**
- * Classe qui gere l'execution des requetes reçues par le serveur
+ * Classe qui gere l'execution des requetes reï¿½ues par le serveur
  */
 public class ExecutionRequete implements Runnable {
 	/**
@@ -24,7 +24,7 @@ public class ExecutionRequete implements Runnable {
 	/**
 	 * Contructeur
 	 * 
-	 * @param requete la requete a traitée
+	 * @param requete la requete a traitï¿½e
 	 * @param o l'ObjectOutputStream sur lequel la reponse sera envoyee
 	 * @param stk l'objet Stockage associe au serveur
 	 */
@@ -49,11 +49,17 @@ public class ExecutionRequete implements Runnable {
 				out2.flush();
 				break;
 			case "SET":
-				if (args.length != 3) {
+				if (args.length < 3) {
 					out2.writeObject("Nombre d'argument incorrect");
 					out2.flush();
 				} else {
-					stockage.ajouterObjet(args[1], (Object) args[2]); 
+					String s = "";
+					for(int i = 2; i < args.length; i++) {
+						s += args[i] + " ";
+					}
+					s = s.substring(0, s.length()-1);
+					
+					stockage.ajouterObjet(args[1], (Object) s); 
 					out2.writeObject("ok");
 					out2.flush();
 				}
@@ -89,11 +95,17 @@ public class ExecutionRequete implements Runnable {
 				}
 				break;
 			case "RPUSH":
-				if (args.length != 3) {
+				if (args.length < 3) {
 					out2.writeObject("Nombre d'argument incorrect");
 					out2.flush();
 				} else {
-					int result = stockage.ajoutListeObject(args[1], (Object) args[2], true);
+					String s = "";
+					for(int i = 2; i < args.length; i++) {
+						s += args[i] + " ";
+					}
+					s = s.substring(0, s.length()-1);
+					
+					int result = stockage.ajoutListeObject(args[1], (Object) s, true);
 					if (result == -1) {
 						out2.writeObject(args[1]+" n'est pas une liste d'Objet");
 						out2.flush();
@@ -104,11 +116,17 @@ public class ExecutionRequete implements Runnable {
 				}
 				break;
 			case "LPUSH":
-				if (args.length != 3) {
+				if (args.length < 3) {
 					out2.writeObject("Nombre d'argument incorrect");
 					out2.flush();
 				} else {
-					int result = stockage.ajoutListeObject(args[1], (Object) args[2], false);
+					String s = "";
+					for(int i = 2; i < args.length; i++) {
+						s += args[i] + " ";
+					}
+					s = s.substring(0, s.length()-1);
+					
+					int result = stockage.ajoutListeObject(args[1], (Object) s, false);
 					if (result == -1) {
 						out2.writeObject(args[1]+" n'est pas une liste d'Objet");
 						out2.flush();
