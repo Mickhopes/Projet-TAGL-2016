@@ -1,9 +1,14 @@
 package fr.uga.info;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * Classe qui sert à stocker les données.
@@ -13,9 +18,14 @@ import java.util.List;
  */
 public class Stockage {
 	/**
-	 * Taille limite en mémoire qu'on doit prendre.
+	 * Taille limite d'objets en mémoire.
 	 */
-	static final long TAILLE_LIMITE = 2000000;
+	static final int TAILLE_LIMITE = 1000;
+	
+	/**
+	 * Attribut contenant le nombre d'objets en mémoire.
+	 */
+	private int tailleOccupee;
 	
 	/**
 	 * Map servant à associer un id à un objet.
@@ -27,6 +37,7 @@ public class Stockage {
 	 */
 	public Stockage() {
 		map = new HashMap<>();
+		tailleOccupee = 0;
 	}
 	
 	/**
@@ -36,9 +47,12 @@ public class Stockage {
 	 * @param o L'objet à mettre en mémoire.
 	 */
 	public synchronized void ajouterObjet(String id, Object o) {
-		// TODO: Tester la place en mémoire de la map
-		// Et si elle dépasse la taille limite, on enlève le plus vieux
+		if (tailleOccupee == TAILLE_LIMITE) {
+			sauvegarderPlusAncien();
+		}
+		
 		map.put(id, o);
+		tailleOccupee++;
 	}
 	
 	
@@ -49,8 +63,10 @@ public class Stockage {
 	 * @return L'objet à récupérer, null si in n'existe pas.
 	 */
 	public synchronized Object recupererObjet(String id) {
-		// TODO: Si l'object n'est pas en mémoire, vérifier si il est
-		// sauvegarder dans le système de fichier
+		if (!map.containsKey(id)) {
+			chargerObjet(id);
+		}
+		
 		return map.get(id);
 	}
 	
@@ -64,6 +80,10 @@ public class Stockage {
 		// TODO: Si l'object n'est pas en mémoire, vérifier si il est
 		// sauvegarder dans le système de fichier
 		if (map.containsKey(id)) {
+			if (map.get(id) instanceof LinkedList<?>) {
+				tailleOccupee -= ((LinkedList<Object>)map.get(id)).size();
+			}
+			
 			map.remove(id);
 			return true;
 		}
@@ -91,6 +111,7 @@ public class Stockage {
 				listeObjet.addFirst(o);
 			}
 			ajouterObjet(id, listeObjet);
+			tailleOccupee ++;
 			return listeObjet.size();
 		} else {
 			// On vérifie d'abords que l'objet est bien une liste
@@ -101,6 +122,7 @@ public class Stockage {
 				} else {
 					listeObjet.addFirst(o);
 				}
+				tailleOccupee++;
 				return listeObjet.size();
 			} else {
 				return -1;
@@ -166,6 +188,7 @@ public class Stockage {
 			// On vérifie qu'on utilise une liste
 			if (liste instanceof LinkedList<?>) {
 				LinkedList<Object> listeObjet = (LinkedList<Object>)liste;
+				tailleOccupee--;
 				if (first) {
 					return listeObjet.removeFirst();
 				} else {
@@ -200,5 +223,42 @@ public class Stockage {
 			return -2;
 		}
 		return -1;
+	}
+	
+	private void sauvegarderPlusAncien() {
+		try (FileWriter fichier = new FileWriter("object_list.txt", true)) {
+			Entry<String, Object> e = map.entrySet().iterator().next();
+			if (e.getValue() instanceof LinkedList<?>) {
+				fichier.write(e.getKey() + ";");
+				LinkedList<Object> l = (LinkedList<Object>)e.getValue();
+				fichier.write(l.get(0).toString());
+				for(int i = 1; i < l.size(); i++) {
+					fichier.write(",,," + l.get(i));
+				}
+				tailleOccupee -= l.size();
+			} else {
+				fichier.write(e.getKey() + ";;;" + e.getValue() + "\n");
+				tailleOccupee--;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void chargerObjet(String id) {
+		try (
+				BufferedReader in = new BufferedReader(new FileReader("object_list.txt"));
+				FileWriter out = new FileWriter("object_list.txt");
+				) {
+			String line;
+			while((line = in.readLine()) != null) {
+				String[] parts = line.split(";;;");
+				if (id.equals(parts[0])) {
+					
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
