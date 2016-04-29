@@ -5,7 +5,7 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 
 /**
- * Classe qui gere l'echange (de requetes) entre le serveur et un client
+ * Classe qui gere l'execution des requetes reçues par le serveur
  */
 public class ExecutionRequete implements Runnable {
 	/**

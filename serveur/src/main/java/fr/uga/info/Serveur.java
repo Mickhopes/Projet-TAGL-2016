@@ -16,6 +16,7 @@ public class Serveur {
 	/**
 	 * methode main
 	 * 
+	 * lance le serveur et appelle la classe AccepterConnexion
 	 * @param args n'est pas utilise
 	 */
 	public static void main(String[] args) {
