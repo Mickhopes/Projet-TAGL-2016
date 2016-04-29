@@ -12,8 +12,6 @@ import java.util.Scanner;
 public class ChatClientServeur implements Runnable {
 
 	private Socket socket;
-	//private PrintWriter out = null;
-	//private BufferedReader in = null;
 	private ObjectInputStream in2;
 	private ObjectOutputStream out2;
 	private Scanner sc;
@@ -24,18 +22,12 @@ public class ChatClientServeur implements Runnable {
 	
 	public void run() {
 		try {
-			//out = new PrintWriter(socket.getOutputStream());
 			out2 = new ObjectOutputStream(socket.getOutputStream());
-			//in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			in2 = new ObjectInputStream(socket.getInputStream());
 			
 			sc = new Scanner(System.in);
 			String requete;
 			
-			/*Thread t4 = new Thread(new Emission(out));
-			t4.start();*/
-			
-			//String message = in.readLine();
 			String message = (String) in2.readObject();
 			if (message.equals("ready")) {
 				System.out.println("le serveur est pret a recevoir une requete.");
@@ -47,30 +39,29 @@ public class ChatClientServeur implements Runnable {
 				message = (String) in2.readObject();
 				System.out.println(message);
 
-				//Commande utilisateur
-				System.out.print("Entrez une commande :");
-				requete = sc.nextLine();
-				out2.writeObject(requete);
-				out2.flush();				
+				requete = "vide";
+				while (!requete.equals("deconnexion")) {
+					
+					//Commande utilisateur
+					System.out.print("Entrez une commande :");
+					requete = sc.nextLine();
+					out2.writeObject(requete);
+					out2.flush();
+					message = (String) in2.readObject();
+					System.out.println(message);
+				}
 
 			}else {
 				System.out.println("le serveur n'est pas pret."+ message);
 			}
 			
-			//Attente de la reponse
-			String reponse = (String) in2.readObject();
-			//String reponse = in.readLine();
-			System.out.println("Reponse du serveur :"+ reponse);
-			
 			//Fin normale du client
 			System.out.println("Le client se deconnecte");
-			out2.writeObject("deconnection");
-			out2.flush();
 			socket.close();
 			
 		    
 		} catch (IOException e) {
-			System.err.println("Le serveur distant s'est deconnecte !");
+			System.out.println("Deconnexion effectue");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}

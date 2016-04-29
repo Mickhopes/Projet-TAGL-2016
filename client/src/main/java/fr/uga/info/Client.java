@@ -22,9 +22,9 @@ public class Client {
 			t1.start();
 		
 		} catch (UnknownHostException e) {
-		  System.err.println("Impossible de se connecter à l'adresse "+socket.getLocalAddress());
+		  System.err.println("Impossible de se connecter a l'adresse "+socket.getLocalAddress());
 		} catch (IOException e) {
-		  System.err.println("Aucun serveur à l'ecoute du port " + port);
+		  System.err.println("Aucun serveur a l'ecoute du port " + port);
 		}
 
 	}

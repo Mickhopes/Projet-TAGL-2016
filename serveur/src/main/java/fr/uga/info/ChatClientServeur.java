@@ -18,10 +18,8 @@ public class ChatClientServeur implements Runnable{
 
 	
 	private Socket socket = null;
-	//private BufferedReader in = null;
 	private ObjectInputStream in2;
 	private ObjectOutputStream out2;
-	//private PrintWriter out = null;
 	private Thread requete;
 	private PrintWriter log;
 	private Date date = new Date();
@@ -35,13 +33,17 @@ public class ChatClientServeur implements Runnable{
 	}
 	
 	private void fermetureSocket(Socket s){
+		ecritureLogs("Fermeture de la socket [" + socket.getInetAddress() + "]");
+	}
+	
+	private void ecritureLogs(String chaine){
 		try {
+			date = new Date();
 			log =  new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
-			log.println("Fermeture de la socket [" + socket.getInetAddress() + "]");
-			s.close();
+			log.println(dateFormat.format(date)+chaine);
 			log.close();
 		} catch (IOException e) {
-			System.out.println("(Serveur) Erreur fermeture socket");
+			e.printStackTrace();
 		}
 	}
 	
@@ -59,23 +61,23 @@ public class ChatClientServeur implements Runnable{
 
 			//Lire la commande tant que ce n'est pas "deconnection"
 			String commande = (String) in2.readObject();
-			while (!commande.equals("deconnection")) {
+			while (!commande.equals("deconnexion")) {
 				
 				//Lancement d'un thread qui va ajouter un objet sur le serveur.
-				log.println(dateFormat.format(date)+"Serveur a une nouvelle commande : ["+commande+"]");
+				ecritureLogs("Serveur a une nouvelle commande : ["+commande+"]");
 				requete = new Thread(new ExecutionRequete(commande, out2, stockage));
 				requete.start();
 				
 				commande = (String) in2.readObject();
 			}
 			
-			//On a recu la deconnection normale du client
+			//On a recu la deconnexion normale du client
 			fermetureSocket(socket);
 			
 		} catch (Exception e){
 			System.out.println("(Serveur) Erreur ChatClientServeur");
 			System.out.println("Le client s'est deconnecte, fermeture de la socket");
-			log.println(dateFormat.format(date)+"Le client s'est deconnecte, fermeture de la socket");
+			ecritureLogs("Le client s'est deconnecte, fermeture de la socket");
 			fermetureSocket(socket);
 		}
 	}
