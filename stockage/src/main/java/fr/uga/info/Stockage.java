@@ -54,7 +54,7 @@ public class Stockage {
 	 * Contructeur avec définition de taille limite.
 	 * 
 	 * @param tailleLimite Taille limite d'objets en mémoire.
-	 * @param tailleLimiteList Taille limite d'objets dans une liste en mémoire.
+	 * @param tailleLimiteListe Taille limite d'objets dans une liste en mémoire.
 	 */
 	public Stockage(int tailleLimite, int tailleLimiteListe) {
 		map = new HashMap<>();
