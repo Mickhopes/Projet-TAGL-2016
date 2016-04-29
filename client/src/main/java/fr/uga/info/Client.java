@@ -16,7 +16,7 @@ public class Client {
 			
 			System.out.println("Demande de connexion");
 			socket = new Socket("127.0.0.1", port);
-			System.out.println("Connexion �tablie avec le serveur"); // Si le message s'affiche c'est que je suis connect�
+			System.out.println("Connexion etablie avec le serveur"); // Si le message s'affiche c'est que je suis connect�
 			
 			t1 = new Thread(new ChatClientServeur(socket));
 			t1.start();

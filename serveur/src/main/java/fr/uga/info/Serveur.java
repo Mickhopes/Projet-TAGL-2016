@@ -28,7 +28,9 @@ public class Serveur {
 		System.out.println("------------------------------------------------------");
 		System.out.println("Le serveur est à l'ecoute du port "+ss.getLocalPort());
 		
-		t = new Thread(new AccepterConnexion(ss));
+		Stockage stockage = new Stockage();
+		
+		t = new Thread(new AccepterConnexion(ss, stockage));
 		t.start();
 	}
 }

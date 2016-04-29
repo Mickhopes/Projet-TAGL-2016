@@ -18,10 +18,12 @@ public class AccepterConnexion implements Runnable{
 	private PrintWriter log;
 	private Date date = new Date();
 	private DateFormat dateFormat = new SimpleDateFormat("[dd/MM HH:mm:ss]");
+	private Stockage stockage;
 	
 	
-	public AccepterConnexion(ServerSocket ss){
+	public AccepterConnexion(ServerSocket ss, Stockage stk){
 		socketserver = ss;
+		stockage = stk;
 	}
 	
 	
@@ -38,7 +40,7 @@ public class AccepterConnexion implements Runnable{
 				log.println(dateFormat.format(date)+"Client "+socket.getInetAddress().getHostName()+" avec "+socket.getInetAddress().getHostAddress()+" s'est connecte");
 				log.close();
 				
-				t1 = new Thread(new ChatClientServeur(socket));
+				t1 = new Thread(new ChatClientServeur(socket, stockage));
 				t1.start();
 			}
 		} catch (IOException e) {
