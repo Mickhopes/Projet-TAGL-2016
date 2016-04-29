@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Classe qui définit le protocole du serveur
+ * Classe qui dÃ©finit le protocole du serveur
  */
 public class ChatClientServeur implements Runnable{
 	
