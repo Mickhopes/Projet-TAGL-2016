@@ -91,7 +91,7 @@ public class Stockage {
 				listeObjet.addFirst(o);
 			}
 			ajouterObjet(id, listeObjet);
-			return 1;
+			return listeObjet.size();
 		} else {
 			// On vérifie d'abords que l'objet est bien une liste
 			if (liste instanceof LinkedList<?>) {
@@ -101,7 +101,7 @@ public class Stockage {
 				} else {
 					listeObjet.addFirst(o);
 				}
-				return 1;
+				return listeObjet.size();
 			} else {
 				return -1;
 			}
@@ -171,7 +171,7 @@ public class Stockage {
 				} else {
 					listeObjet.removeLast();
 				}
-				return 1;
+				return listeObjet.size();
 			}
 			return -2;
 		}
