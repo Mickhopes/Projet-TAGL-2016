@@ -58,7 +58,7 @@ public class Stockage {
 	 * Supprime un objet en mémoire.
 	 * 
 	 * @param id Id de l'objet à supprimer.
-	 * @return L'objet à supprimer.
+	 * @return true si l'objet à été supprimé, false sinon.
 	 */
 	public synchronized boolean supprimerObjet(String id) {
 		// TODO: Si l'object n'est pas en mémoire, vérifier si il est
@@ -77,7 +77,7 @@ public class Stockage {
 	 * @param id L'id de la liste.
 	 * @param o L'object à ajouter.
 	 * @param fin true pour ajouter à la fin de la liste, false au début.
-	 * @return -1 si l'object renseigné par "id" n'est pas une liste, 1 sinon.
+	 * @return -1 si l'object renseigné par "id" n'est pas une liste, sinon la nouvelle taille de la liste.
 	 */
 	public synchronized int ajoutListeObject(String id, Object o, boolean fin) {
 		Object liste = recupererObjet(id);
@@ -156,9 +156,9 @@ public class Stockage {
 	 * 
 	 * @param id L'id de la liste.
 	 * @param first true si on supprime le premier, false le dernier.
-	 * @return -1 si l'object n'existe pas, -2 si l'objet n'est pas une liste, 1 sinon.
+	 * @return L'objet supprimé, null si la liste n'existe pas ou que l'objet n'est pas une liste.
 	 */
-	public synchronized int supprimerListeObject(String id, boolean first) {
+	public synchronized Object supprimerListeObject(String id, boolean first) {
 		Object liste = recupererObjet(id);
 		
 		// Si on a null, la liste n'existe pas il faut la créer.
@@ -167,15 +167,13 @@ public class Stockage {
 			if (liste instanceof LinkedList<?>) {
 				LinkedList<Object> listeObjet = (LinkedList<Object>)liste;
 				if (first) {
-					listeObjet.removeFirst();
+					return listeObjet.removeFirst();
 				} else {
-					listeObjet.removeLast();
+					return listeObjet.removeLast();
 				}
-				return listeObjet.size();
 			}
-			return -2;
 		}
-		return -1;
+		return null;
 	}
 	
 	/**

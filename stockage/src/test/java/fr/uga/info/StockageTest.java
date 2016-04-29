@@ -106,7 +106,7 @@ public class StockageTest {
 		
 		s.supprimerObjet("test");
 		
-		assertEquals(-1, s.supprimerListeObject("test", true));
+		assertNull(s.supprimerListeObject("test", true));
 		assertEquals(0, s.nombreObjet());
 	}
 }
