@@ -42,9 +42,9 @@ public class AccepterConnexion implements Runnable {
 	/**
 	 * Implementation de la methode run de l'interface Runnable
 	 * 
-	 * La fonction tourne en boucle et accepte les demandes de connexion.
-	 * Chaque demande acceptee entraine la création d'un thread qui va
-	 * appeler la classe ChatClientServeur
+	 * Tourne en boucle et accepte les demandes de connexion.
+	 * Chaque demande acceptee entraine la creation d'un thread
+	 * qui va appeler la classe ChatClientServeur (protocole serveur)
 	 */
 	public void run() {
 		try {

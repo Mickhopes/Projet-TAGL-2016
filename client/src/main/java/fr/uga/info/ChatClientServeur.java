@@ -9,23 +9,36 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+/**
+ * Classe qui définit le protocole du client
+ */
 public class ChatClientServeur implements Runnable {
-
-	private Socket socket;
-	private ObjectInputStream in2;
-	private ObjectOutputStream out2;
-	private Scanner sc;
 	
+	/**
+	 * Socket pour la communication client-serveur
+	 */
+	private Socket socket;
+	
+	/**
+	 * Contructeur
+	 * 
+	 * @param s la socket associee a la connexion etablie
+	 */
 	public ChatClientServeur(Socket s){
 		socket = s;
 	}
 	
+	/**
+	 * Implementation de la methode run de l'interface Runnable
+	 * 
+	 * Tourne en boucle en envoyant les requetes saisies par le client
+	 */
 	public void run() {
 		try {
-			out2 = new ObjectOutputStream(socket.getOutputStream());
-			in2 = new ObjectInputStream(socket.getInputStream());
+			ObjectOutputStream out2 = new ObjectOutputStream(socket.getOutputStream());
+			ObjectInputStream in2 = new ObjectInputStream(socket.getInputStream());
 			
-			sc = new Scanner(System.in);
+			Scanner sc = new Scanner(System.in);
 			String requete;
 			
 			String message = (String) in2.readObject();
@@ -51,7 +64,7 @@ public class ChatClientServeur implements Runnable {
 					System.out.println(message);
 				}
 
-			}else {
+			} else {
 				System.out.println("le serveur n'est pas pret."+ message);
 			}
 			

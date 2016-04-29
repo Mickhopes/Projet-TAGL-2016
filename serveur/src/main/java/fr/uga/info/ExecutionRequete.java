@@ -2,21 +2,43 @@ package fr.uga.info;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.util.List;
 
+/**
+ * Classe qui gere l'execution des requetes reçues par le serveur
+ */
 public class ExecutionRequete implements Runnable {
+	/**
+	 * la commande a traiter (envoyee par le client)
+	 */
 	private String commande;
-	//private PrintWriter out;
+	/**
+	 * l'ObjectOutputStream sur lequel la reponse sera envoyee
+	 */
 	private ObjectOutputStream out2;
+	/**
+	 * Objet Stockage associe au serveur
+	 */
 	private Stockage stockage;
 	
+	/**
+	 * Contructeur
+	 * 
+	 * @param requete la requete a traitée
+	 * @param o l'ObjectOutputStream sur lequel la reponse sera envoyee
+	 * @param stk l'objet Stockage associe au serveur
+	 */
 	public ExecutionRequete (String requete, ObjectOutputStream o, Stockage stk) {
 		commande = requete;
 		out2 = o;
 		stockage = stk;
 	}
 
+	/**
+	 * Implementation de la methode run de l'interface Runnable
+	 * 
+	 * Traite la requete du client et envoie la reponse correspondante
+	 */
 	public void run() {
 		try {
 			

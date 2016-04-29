@@ -1,0 +1,12 @@
+Serveur ready !
+[29/04 19:46:37]Client 127.0.0.1 avec 127.0.0.1 s'est connecte
+[29/04 19:46:37]Serveur a une nouvelle commande : [HELP]
+[29/04 19:46:38]Le client s'est deconnecte, fermeture de la socket
+[29/04 19:46:38]Fermeture de la socket [127.0.0.1/127.0.0.1]
+Serveur ready !
+[29/04 20:00:04]Client 127.0.0.1 avec 127.0.0.1 s'est connecte
+[29/04 20:00:04]Serveur a une nouvelle commande : [HELP]
+[29/04 20:00:07]Serveur a une nouvelle commande : [SET MA BITE]
+[29/04 20:00:11]Serveur a une nouvelle commande : [GET MA]
+[29/04 20:00:14]Le client s'est deconnecte, fermeture de la socket
+[29/04 20:00:14]Fermeture de la socket [127.0.0.1/127.0.0.1]

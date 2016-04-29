@@ -14,32 +14,44 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Classe qui définit le protocole du serveur
+ */
 public class ChatClientServeur implements Runnable{
-
 	
+	/**
+	 * Socket pour la communication client-serveur
+	 */
 	private Socket socket = null;
-	private ObjectInputStream in2;
-	private ObjectOutputStream out2;
-	private Thread requete;
-	private PrintWriter log;
-	private Date date = new Date();
-	private DateFormat dateFormat = new SimpleDateFormat("[dd/MM HH:mm:ss]");
+	/**
+	 * Objet Stockage, recupere du serveur via AccepterConnexion
+	 */
 	private Stockage stockage;
-
+	/**
+	 * format de Date a utiliser dans le log
+	 */
+	private final DateFormat dateFormat = new SimpleDateFormat("[dd/MM HH:mm:ss]");
 	
+	/**
+	 * Contructeur
+	 * 
+	 * @param s la socket associee a la connexion etablie
+	 * @param stk l'objet Stockage associe au serveur
+	 */
 	public ChatClientServeur(Socket s, Stockage stk){
 		socket = s;
 		stockage = stk;
 	}
 	
-	private void fermetureSocket(Socket s){
-		ecritureLogs("Fermeture de la socket [" + socket.getInetAddress() + "]");
-	}
-	
+	/**
+	 * Ecrit la chaine passee en parametre dans le fichier de log
+	 * 
+	 * @param chaine la chaine a ecrire
+	 */
 	private void ecritureLogs(String chaine){
 		try {
-			date = new Date();
-			log =  new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
+			Date date = new Date();
+			PrintWriter log =  new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
 			log.println(dateFormat.format(date)+chaine);
 			log.close();
 		} catch (IOException e) {
@@ -47,13 +59,28 @@ public class ChatClientServeur implements Runnable{
 		}
 	}
 	
+	/**
+	 * appelle ecritureLogs avec un message de fermeture
+	 * 
+	 * @param s la socket (son adresse inet est requise)
+	 */
+	private void fermetureSocket(Socket s){
+		ecritureLogs("Fermeture de la socket [" + socket.getInetAddress() + "]");
+	}
 	
+	/**
+	 * Implementation de la methode run de l'interface Runnable
+	 * 
+	 * Tourne en boucle et execute les requetes du client
+	 * Chaque requete entraine la creation d'un thread
+	 * qui va appeler la classe ExecutionRequete
+	 */
 	public void run() {
 		try {
 			//Ouverture du fichier de logs
-			log =  new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
-			in2 = new ObjectInputStream(socket.getInputStream());
-			out2 = new ObjectOutputStream(socket.getOutputStream());
+			PrintWriter log =  new PrintWriter(new BufferedWriter(new FileWriter("log.txt", true)));
+			ObjectInputStream in2 = new ObjectInputStream(socket.getInputStream());
+			ObjectOutputStream out2 = new ObjectOutputStream(socket.getOutputStream());
 			
 			//Envoie d'un message au client pour signifier que le serveur est pret a recevoir une requete.
 			out2.writeObject("ready");
@@ -65,7 +92,7 @@ public class ChatClientServeur implements Runnable{
 				
 				//Lancement d'un thread qui va ajouter un objet sur le serveur.
 				ecritureLogs("Serveur a une nouvelle commande : ["+commande+"]");
-				requete = new Thread(new ExecutionRequete(commande, out2, stockage));
+				Thread requete = new Thread(new ExecutionRequete(commande, out2, stockage));
 				requete.start();
 				
 				commande = (String) in2.readObject();
