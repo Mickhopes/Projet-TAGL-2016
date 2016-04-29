@@ -36,16 +36,48 @@ public class Stockage {
 	private int tailleOccupee;
 	
 	/**
+	 * Attribut contenant la taille limite d'objets en mémoire.
+	 */
+	private int tailleLimite;
+	
+	/**
+	 * Attribut contenant la taille limite d'objets dans une liste en mémoire.
+	 */
+	private int tailleLimiteListe;
+	
+	/**
 	 * Map servant à associer un id à un objet.
 	 */
 	private HashMap<String, Object> map;
 	
 	/**
-	 * Contructeur par défaut.
+	 * Contructeur avec définition de taille limite.
+	 * 
+	 * @param tailleLimite Taille limite d'objets en mémoire.
+	 * @param tailleLimiteList Taille limite d'objets dans une liste en mémoire.
 	 */
-	public Stockage() {
+	public Stockage(int tailleLimite, int tailleLimiteListe) {
 		map = new HashMap<>();
 		tailleOccupee = 0;
+		this.tailleLimite = tailleLimite;
+		this.tailleLimiteListe = tailleLimiteListe;
+	}
+	
+	/**
+	 * Contructeur avec définition de taille limite.
+	 * 
+	 * @param tailleLimite Taille limite d'objets en mémoire.
+	 */
+	public Stockage(int tailleLimite) {
+		this(tailleLimite, TAILLE_LIMITE_LISTE);
+	}
+	
+	/**
+	 * Constructeur par défaut.
+	 * Met la taille limite d'objets à celle définit par TAILLE_LIMITE.
+	 */
+	public Stockage() {
+		this(TAILLE_LIMITE, TAILLE_LIMITE_LISTE);
 	}
 	
 	/**
@@ -55,7 +87,7 @@ public class Stockage {
 	 * @param o L'objet à mettre en mémoire.
 	 */
 	public synchronized void ajouterObjet(String id, Object o) {
-		if (tailleOccupee == TAILLE_LIMITE) {
+		if (tailleOccupee == tailleLimite) {
 			sauvegarderPlusAncien();
 		}
 		
@@ -124,7 +156,7 @@ public class Stockage {
 			// On vérifie d'abords que l'objet est bien une liste
 			if (liste instanceof LinkedList<?>) {
 				LinkedList<Object> listeObjet = (LinkedList<Object>)liste;
-				if (listeObjet.size() == TAILLE_LIMITE_LISTE) {
+				if (listeObjet.size() == tailleLimiteListe) {
 					return -2;
 				}
 				if (fin) {
@@ -232,7 +264,7 @@ public class Stockage {
 		Entry<String, Object> e = map.entrySet().iterator().next();
 		new File("Objets").mkdirs();
 		try (
-				FileOutputStream fichier = new FileOutputStream(new File("Objets/" + e.getKey() + ".ser"));
+				FileOutputStream fichier = new FileOutputStream(new File("./Objets/" + e.getKey() + ".ser"));
 				ObjectOutputStream oos = new ObjectOutputStream(fichier);
 				) {
 			oos.writeObject(e.getValue());
@@ -254,7 +286,7 @@ public class Stockage {
 	
 	private void chargerObjet(String id) {
 		try (
-				FileInputStream fichier = new FileInputStream(new File("Objets/" + id + ".ser"));
+				FileInputStream fichier = new FileInputStream(new File("./Objets/" + id + ".ser"));
 				ObjectInputStream ois = new ObjectInputStream(fichier);
 				) {
 			Object o = ois.readObject();
@@ -262,14 +294,14 @@ public class Stockage {
 			if (o instanceof LinkedList<?>) {
 				LinkedList<Object> l = (LinkedList<Object>)o;
 				
-				while(tailleOccupee+l.size() >= TAILLE_LIMITE) {
+				while(tailleOccupee+l.size() >= tailleLimite) {
 					sauvegarderPlusAncien();
 				}
 				
 				map.put(id, l);
 				tailleOccupee += l.size();
 			} else {
-				if (tailleOccupee == TAILLE_LIMITE) {
+				if (tailleOccupee == tailleLimite) {
 					sauvegarderPlusAncien();
 				}
 				
@@ -284,7 +316,7 @@ public class Stockage {
 	}
 	
 	private boolean supprimerFichier(String id) {
-		File suppr = new File("Objets/" + id + ".ser");
+		File suppr = new File("./Objets/" + id + ".ser");
 		suppr.getAbsoluteFile().delete();
 		return true;
 	}
