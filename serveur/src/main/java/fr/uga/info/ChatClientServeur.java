@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Classe qui gere l'échange de requete entre le serveur et un client
+ * Classe qui gere l'echange (de requetes) entre le serveur et un client
  */
 public class ChatClientServeur implements Runnable{
 	
@@ -35,7 +35,7 @@ public class ChatClientServeur implements Runnable{
 	/**
 	 * Contructeur
 	 * 
-	 * @param ss la socket associee à la connexion établie
+	 * @param s la socket associee a la connexion etablie
 	 * @param stk l'objet Stockage associe au serveur
 	 */
 	public ChatClientServeur(Socket s, Stockage stk){
@@ -44,9 +44,9 @@ public class ChatClientServeur implements Runnable{
 	}
 	
 	/**
-	 * Ecrit la chaine passée en parametre dans le fichier de log
+	 * Ecrit la chaine passee en parametre dans le fichier de log
 	 * 
-	 * @param chaine la chaine à écrire
+	 * @param chaine la chaine a ecrire
 	 */
 	private void ecritureLogs(String chaine){
 		try {
