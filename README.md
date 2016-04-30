@@ -55,14 +55,14 @@ Le client ne permet de tester qu'avec des chaînes de caractères à titre d'exe
 Voici la liste des commandes utilisables:
 
 - HELP - Affiche la liste des commandes.
-- SET <clé> <valeur> - Crée une nouvelle entré avec la clé et la valeur.
-- GET <clé> - Récupère la valeur pointée par la clé.
-- DEL <clé> - Supprime l'entrée pointée par la clé.
-- RPUSH <clé> <valeur> - Ajoute la valeur à la fin de la liste pointée par la clé.
-- LPUSH <clé> <valeur> - Ajoute la valeur au début de la liste pointée par la clé.
-- RPOP <clé> - Supprime le dernier élément de la liste pointée par la clé.
-- LPOP <clé> - Supprime le premier élément de la liste pointée par la clé.
-- LRANGE <clé> <début> <fin> - Retoune la liste des valeurs de l'index de début à l'index de fin de la liste pointée par la clé. Si -1 est indiqué pour fin, alors toute la liste est renvoyée.
+- SET clé valeur - Crée une nouvelle entré avec la clé et la valeur.
+- GET clé - Récupère la valeur pointée par la clé.
+- DEL clé - Supprime l'entrée pointée par la clé.
+- RPUSH clé valeur - Ajoute la valeur à la fin de la liste pointée par la clé.
+- LPUSH clé valeur - Ajoute la valeur au début de la liste pointée par la clé.
+- RPOP clé - Supprime le dernier élément de la liste pointée par la clé.
+- LPOP clé - Supprime le premier élément de la liste pointée par la clé.
+- LRANGE clé début fin - Retoune la liste des valeurs de l'index de début à l'index de fin de la liste pointée par la clé. Si -1 est indiqué pour fin, alors toute la liste est renvoyée.
 
 Pour les commandes RPUSH et LPUSH, si la liste n'existe pas, elle est créée.
 
